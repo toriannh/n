@@ -1,10 +1,43 @@
+from transformers import pipeline
 
-Sure! Below is a comprehensive README file that covers everything we've done so far, from extracting text with a specific font size from an HTML document to generating a word cloud and displaying summarization results in a tabular format.
+# Example text to summarize
+text = """
+Your text here. This can be a long piece of text that you want to summarize. 
+The summarize function will extract the most important sentences from this text.
+"""
 
-Text Extraction and Summarization with Word Cloud Generation
-This project demonstrates how to extract text from an HTML document based on specific font size, perform text summarization using different algorithms, and generate a word cloud from the extracted text. The project includes the following steps:
+# GPT-2
+summarizer_gpt2 = pipeline("summarization", model="gpt2")
+summary_gpt2 = summarizer_gpt2(text, max_length=130, min_length=30, do_sample=False)
+print("GPT-2 Summary:")
+print(summary_gpt2)
 
-Extracting text with a specific font size from an HTML document.
-Summarizing text using LexRank and spaCy with pyTextRank.
-Displaying the summarization results in a markdown table.
-Generating a word cloud from the extracted text.
+# BERT
+summarizer_bert = pipeline("summarization", model="bert-base-uncased")
+summary_bert = summarizer_bert(text, max_length=130, min_length=30, do_sample=False)
+print("BERT Summary:")
+print(summary_bert)
+
+# BART
+summarizer_bart = pipeline("summarization", model="facebook/bart-large-cnn")
+summary_bart = summarizer_bart(text, max_length=130, min_length=30, do_sample=False)
+print("BART Summary:")
+print(summary_bart)
+
+# T5
+summarizer_t5 = pipeline("summarization", model="t5-base")
+summary_t5 = summarizer_t5(text, max_length=130, min_length=30, do_sample=False)
+print("T5 Summary:")
+print(summary_t5)
+
+# DistilBERT
+summarizer_distilbart = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+summary_distilbart = summarizer_distilbart(text, max_length=130, min_length=30, do_sample=False)
+print("DistilBERT Summary:")
+print(summary_distilbart)
+
+# PEGASUS
+summarizer_pegasus = pipeline("summarization", model="google/pegasus-xsum")
+summary_pegasus = summarizer_pegasus(text, max_length=130, min_length=30, do_sample=False)
+print("PEGASUS Summary:")
+print(summary_pegasus)
