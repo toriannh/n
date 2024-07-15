@@ -1,47 +1,17 @@
-pip install transformers
-pip install bert-extractive-summarizer
+Subject: Summarization Model Results from 10Q Analysis
 
+Dear Eldar, Suzanne, and Richard,
 
-from summarizer import TransformerSummarizer
+I hope you all had a great weekend.
 
-# Example text to summarize
-text = """
-Your text here. This can be a long piece of text that you want to summarize. 
-The summarize function will extract the most important sentences from this text.
-"""
+In our previous discussions, we reviewed extractive NLP models that highlight sentences with the greatest relevancy and importance. I have now run abstractive models on the sentences pulled from the 10Q based on the key words. The attached Excel spreadsheet, "Abstract_results.xlsx," contains several abstract summarization models and the output in the subsequent row for each column.
 
-# BERT
-bert_model = TransformerSummarizer(transformer_type="BERT", transformer_model_key="bert-base-uncased")
-bert_summary = ''.join(bert_model(text, min_length=30, max_length=130))
-print("BERT Summary:")
-print(bert_summary)
+I understand that we are still in the process of capturing the nuanced and insightful information in the 10Q using the extractive models, but I wanted to go ahead and show you the summarization results so far.
 
-# GPT-2
-gpt2_model = TransformerSummarizer(transformer_type="GPT2", transformer_model_key="gpt2")
-gpt2_summary = ''.join(gpt2_model(text, min_length=30, max_length=130))
-print("GPT-2 Summary:")
-print(gpt2_summary)
+I think once we improve the pipeline to pull sentences that provide deeper insights and valuable context, we can use those sentences to enhance the output for the abstractive summarization results.
 
-# BART
-bart_model = TransformerSummarizer(transformer_type="BART", transformer_model_key="facebook/bart-large-cnn")
-bart_summary = ''.join(bart_model(text, min_length=30, max_length=130))
-print("BART Summary:")
-print(bart_summary)
+Thank you, and I look forward to your feedback.
 
-# T5
-t5_model = TransformerSummarizer(transformer_type="T5", transformer_model_key="t5-base")
-t5_summary = ''.join(t5_model(text, min_length=30, max_length=130))
-print("T5 Summary:")
-print(t5_summary)
+Best regards,
 
-# DistilBERT
-distilbert_model = TransformerSummarizer(transformer_type="DistilBERT", transformer_model_key="distilbert-base-uncased")
-distilbert_summary = ''.join(distilbert_model(text, min_length=30, max_length=130))
-print("DistilBERT Summary:")
-print(distilbert_summary)
-
-# RoBERTa
-roberta_model = TransformerSummarizer(transformer_type="RoBERTa", transformer_model_key="roberta-base")
-roberta_summary = ''.join(roberta_model(text, min_length=30, max_length=130))
-print("RoBERTa Summary:")
-print(roberta_summary)
+[Your Name]
