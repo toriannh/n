@@ -1,7 +1,3 @@
-Sure, here's the detailed summary of the 10Q Summarization Model formatted for a Word document:
-
----
-
 ### Detailed Summary of the 10Q Summarization Model
 
 #### Introduction
@@ -67,6 +63,16 @@ def extract_key_sentences(text):
     key_sentences = risk_sentences + cashflow_sentences + balance_sheet_sentences
     return key_sentences
 ```
+
+#### Extractive Summarization Algorithms Used
+
+Several extractive summarization algorithms were considered and tested to identify the most relevant sentences in the 10Q documents. The main algorithms used include:
+
+1. **TF-IDF (Term Frequency-Inverse Document Frequency)**: This algorithm scores the importance of a sentence based on the frequency of terms within the document and the rarity of those terms across all documents.
+2. **LexRank**: An unsupervised algorithm based on graph-based centrality scoring, which measures the importance of a sentence by considering its similarity to other sentences.
+3. **TextRank**: Another graph-based ranking algorithm inspired by Google's PageRank, which identifies the most important sentences by analyzing the connections (similarities) between them.
+4. **LDA (Latent Dirichlet Allocation)**: A topic modeling algorithm that helps in identifying sentences that best represent the underlying topics within the document.
+5. **BERT-based Extractive Summarizer**: Utilizes BERT embeddings to understand the context and meaning of sentences, allowing for more accurate extraction of relevant sentences.
 
 #### Abstractive Summarization
 
@@ -150,8 +156,4 @@ Thank you for the opportunity to work on this project.
 
 Best regards,
 
-[Your Name]
-
----
-
-This summary is formatted to be suitable for inclusion in a Word document. You can copy and paste this text into a Word processor and format it further as needed.
+Tori-Ann Holness
