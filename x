@@ -1,149 +1,47 @@
-### Detailed Summary of the 10Q Summarization Model
+Here’s a high-level overview of how the specified transformer models work:
 
-#### Introduction
+### BERT ("bert-base-uncased")
 
-During my summer internship at the Federal Reserve, I was tasked with developing a model to summarize 10Q financial statements filed with the SEC. This model aims to extract the most relevant information from these lengthy documents and present it in a concise and understandable format. The summarization model combines both extractive and abstractive summarization techniques to achieve this goal. Below is a detailed overview of the development process, methodologies, and results of the summarization model.
+**BERT (Bidirectional Encoder Representations from Transformers)**:
+- **Architecture**: BERT is based on the Transformer architecture and uses a stack of encoders. It is bidirectional, meaning it reads text from both directions (left-to-right and right-to-left) to capture context from both sides of a word.
+- **Pre-training**: BERT is pre-trained on two tasks: Masked Language Modeling (MLM) and Next Sentence Prediction (NSP). In MLM, random words in a sentence are masked and the model learns to predict them. In NSP, the model learns to predict whether two given sentences are consecutive.
+- **Use Case**: BERT is primarily used for tasks that benefit from understanding the context of words in a sentence, such as text classification, named entity recognition, and question answering. For extractive summarization, BERT can be fine-tuned to identify the most important sentences in a document.
 
-#### Objectives
+### GPT-2 ("gpt2")
 
-The primary objectives of this project were:
-1. To develop an extractive summarization model that identifies and extracts sentences with the greatest relevancy and importance from 10Q financial statements.
-2. To enhance the extracted sentences using abstractive summarization models to provide more coherent and concise summaries.
-3. To create a pipeline that can be used to consistently generate summaries from multiple 10Q documents.
+**GPT-2 (Generative Pre-trained Transformer 2)**:
+- **Architecture**: GPT-2 is a transformer model that uses a stack of decoders. It reads text in a left-to-right fashion, making it unidirectional.
+- **Pre-training**: GPT-2 is pre-trained on a large corpus of text with the objective of predicting the next word in a sentence (Language Modeling).
+- **Use Case**: GPT-2 excels at generating coherent and contextually relevant text, making it suitable for tasks such as text generation, dialogue systems, and completion. It can also be adapted for abstractive summarization by generating summaries that capture the essence of the input text.
 
-#### Data Collection and Preprocessing
+### BART ("facebook/bart-large-cnn")
 
-The first step in developing the summarization model involved collecting and preprocessing the data. 10Q documents were obtained in HTML format from the SEC’s EDGAR database. The key stages in data preprocessing included:
+**BART (Bidirectional and Auto-Regressive Transformers)**:
+- **Architecture**: BART combines the features of BERT (bidirectional encoder) and GPT (unidirectional decoder). It uses a Transformer encoder-decoder architecture.
+- **Pre-training**: BART is pre-trained by corrupting text with noise and then learning to reconstruct the original text. This allows it to handle a wide range of text generation tasks.
+- **Use Case**: BART is particularly effective for text generation tasks like translation, summarization, and text completion. The "facebook/bart-large-cnn" model is fine-tuned on the CNN/DailyMail dataset specifically for summarization tasks.
 
-1. **HTML Parsing**: Using BeautifulSoup, the HTML documents were parsed to extract text content, specifically focusing on paragraphs with a font size of 10pt, which typically contain key financial information.
-2. **Text Cleaning**: The extracted text was cleaned to remove any extraneous characters, extra whitespace, and irrelevant HTML tags.
+### T5 ("t5-base")
 
-```python
-import requests
-from bs4 import BeautifulSoup
-import re
+**T5 (Text-To-Text Transfer Transformer)**:
+- **Architecture**: T5 uses a Transformer encoder-decoder architecture. It treats every NLP task as a text-to-text problem, converting inputs and outputs into text strings.
+- **Pre-training**: T5 is pre-trained on a multi-task mixture of unsupervised and supervised tasks with a unified text-to-text format. The model learns to perform tasks by training on various datasets.
+- **Use Case**: T5 is highly versatile and can be used for a wide range of NLP tasks, including translation, summarization, and classification. The "t5-base" model can be fine-tuned for summarization tasks by training it to convert long text into concise summaries.
 
-def extract_text_with_font_size(soup, font_size='10pt'):
-    elements = soup.find_all(lambda tag: tag.has_attr('style') and f'font-size: {font_size}' in tag['style'])
-    text_content = [element.get_text(separator=' ') for element in elements]
-    combined_text = ' '.join(text_content)
-    cleaned_text = re.sub('\s+', ' ', combined_text).strip()
-    return cleaned_text
+### DistilBERT ("distilbert-base-uncased")
 
-# Example usage
-url = 'https://www.example.com/sample.html'
-response = requests.get(url)
-html_content = response.content
-soup = BeautifulSoup(html_content, 'html.parser')
-output = extract_text_with_font_size(soup, '10pt')
-```
+**DistilBERT (Distilled BERT)**:
+- **Architecture**: DistilBERT is a smaller, faster, and lighter version of BERT, created through a process called knowledge distillation. It retains 97% of BERT's performance while being 60% faster and 40% smaller.
+- **Pre-training**: DistilBERT is trained to approximate the behavior of BERT. It is pre-trained using the same objectives (MLM and NSP) but with fewer layers and parameters.
+- **Use Case**: DistilBERT is suitable for scenarios where computational resources are limited but performance close to BERT is desired. It can be used for tasks like text classification, named entity recognition, and extractive summarization.
 
-#### Extractive Summarization
+### RoBERTa ("roberta-base")
 
-The next step involved developing an extractive summarization model that highlights the most relevant and important sentences from the preprocessed text. Key components of this stage included:
+**RoBERTa (Robustly optimized BERT approach)**:
+- **Architecture**: RoBERTa is based on the BERT architecture but with improvements in training methodology. It uses a stack of encoders and is bidirectional.
+- **Pre-training**: RoBERTa improves upon BERT by using dynamic masking, removing the NSP objective, training on longer sequences, and using a larger mini-batch size. It is pre-trained on a more extensive dataset.
+- **Use Case**: RoBERTa achieves better performance on various NLP tasks compared to BERT. It is used for tasks requiring a deep understanding of context, such as text classification, sentiment analysis, and extractive summarization.
 
-1. **Keyword Identification**: Using regular expressions and NLP techniques, key paragraphs related to risk factors, cash flow, and balance sheet data were identified.
-2. **Sentence Extraction**: Sentences containing the identified keywords were extracted. NLTK’s `sent_tokenize` was used to split the text into sentences, and relevant sentences were selected based on the presence of the keywords.
+### Conclusion
 
-```python
-import nltk
-nltk.download('punkt')
-from nltk.tokenize import sent_tokenize
-
-def extract_key_sentences(text):
-    sentences = sent_tokenize(text)
-    risk_keywords = r'\b(risk|uncertainty|contingency|exposure)\b'
-    cashflow_keywords = r'\b(cash flow|cash flows|operating activities|financing activities|investing activities)\b'
-    balance_sheet_keywords = r'\b(balance sheet|assets|liabilities|equity)\b'
-    
-    risk_sentences = [sent for sent in sentences if re.search(risk_keywords, sent, re.IGNORECASE)]
-    cashflow_sentences = [sent for sent in sentences if re.search(cashflow_keywords, sent, re.IGNORECASE)]
-    balance_sheet_sentences = [sent for sent in sentences if re.search(balance_sheet_keywords, sent, re.IGNORECASE)]
-    
-    key_sentences = risk_sentences + cashflow_sentences + balance_sheet_sentences
-    return key_sentences
-```
-
-#### Abstractive Summarization
-
-Once the relevant sentences were extracted, the next step was to enhance them using abstractive summarization models. The goal was to produce a more coherent and readable summary. Several transformer models were considered, including BERT, GPT-2, BART, T5, DistilBERT, and RoBERTa. The `transformers` library from Hugging Face was used to implement these models.
-
-1. **Model Selection**: The following models were selected for summarization:
-   - BERT: `"bert-base-uncased"`
-   - GPT-2: `"gpt2"`
-   - BART: `"facebook/bart-large-cnn"`
-   - T5: `"t5-base"`
-   - DistilBERT: `"distilbert-base-uncased"`
-   - RoBERTa: `"roberta-base"`
-
-2. **Implementation**: The `TransformerSummarizer` class from the `bert-extractive-summarizer` library was used to apply these models.
-
-```python
-from summarizer import TransformerSummarizer
-
-# Example text
-text = "Your text here. This can be a long piece of text that you want to summarize."
-
-# BERT
-bert_model = TransformerSummarizer(transformer_type="BERT", transformer_model_key="bert-base-uncased")
-bert_summary = ''.join(bert_model(text, min_length=30, max_length=130))
-print("BERT Summary:")
-print(bert_summary)
-
-# GPT-2
-gpt2_model = TransformerSummarizer(transformer_type="GPT2", transformer_model_key="gpt2")
-gpt2_summary = ''.join(gpt2_model(text, min_length=30, max_length=130))
-print("GPT-2 Summary:")
-print(gpt2_summary)
-
-# BART
-bart_model = TransformerSummarizer(transformer_type="BART", transformer_model_key="facebook/bart-large-cnn")
-bart_summary = ''.join(bart_model(text, min_length=30, max_length=130))
-print("BART Summary:")
-print(bart_summary)
-
-# T5
-t5_model = TransformerSummarizer(transformer_type="T5", transformer_model_key="t5-base")
-t5_summary = ''.join(t5_model(text, min_length=30, max_length=130))
-print("T5 Summary:")
-print(t5_summary)
-
-# DistilBERT
-distilbert_model = TransformerSummarizer(transformer_type="DistilBERT", transformer_model_key="distilbert-base-uncased")
-distilbert_summary = ''.join(distilbert_model(text, min_length=30, max_length=130))
-print("DistilBERT Summary:")
-print(distilbert_summary)
-
-# RoBERTa
-roberta_model = TransformerSummarizer(transformer_type="RoBERTa", transformer_model_key="roberta-base")
-roberta_summary = ''.join(roberta_model(text, min_length=30, max_length=130))
-print("RoBERTa Summary:")
-print(roberta_summary)
-```
-
-#### Results and Analysis
-
-The results of the abstractive summarization models were compiled into an Excel spreadsheet named "Abstract_results.xlsx". Each column in the spreadsheet represents a different summarization model, and the subsequent rows contain the summaries generated by each model.
-
-1. **Comparison of Models**: The performance of each model was analyzed based on the coherence, readability, and informativeness of the summaries.
-2. **Feedback and Iteration**: The initial results were reviewed, and feedback was provided by the team. The pipeline was iteratively improved to enhance the extraction and summarization process.
-
-#### Future Work
-
-While the initial results are promising, there are several areas for further improvement:
-
-1. **Enhanced Extraction**: Improve the pipeline to better identify and extract sentences that provide deeper insights and valuable context from the 10Q documents.
-2. **Model Fine-Tuning**: Fine-tune the abstractive summarization models on a dataset of financial documents to improve their performance.
-3. **Automated Evaluation**: Develop automated evaluation metrics to assess the quality of the summaries more objectively.
-
-#### Conclusion
-
-The summarization model developed during this internship combines extractive and abstractive summarization techniques to provide concise and coherent summaries of 10Q financial statements. The model leverages state-of-the-art transformer models to achieve this goal. While there is room for further improvement, the current results demonstrate the potential of using NLP techniques to automate the summarization of complex financial documents.
-
-I look forward to any feedback and suggestions for further enhancing the summarization model.
-
-Thank you for the opportunity to work on this project.
-
-Best regards,
-
-[Your Name]
+Each of these models leverages the Transformer architecture but with different training strategies and architectures tailored to specific tasks. BERT, DistilBERT, and RoBERTa excel in understanding context for extractive tasks. GPT-2, BART, and T5 are more suited for generative tasks, making them ideal for abstractive summarization. The choice of model depends on the specific requirements of the task, such as the need for bidirectional context understanding or the ability to generate coherent text.
